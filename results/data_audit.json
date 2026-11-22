@@ -1,0 +1,33 @@
+{
+  "snapshot_downloaded": "2026-11-18",
+  "analysis_date": "2026-11-22",
+  "source_url": "https://files.ember-energy.org/public-downloads/generation/outputs/release_generation_monthly_global.csv",
+  "filter": {
+    "Area": "Kazakhstan",
+    "Electricity source": "Total generation",
+    "target": "Generation (TWh)"
+  },
+  "snapshot_sha256": "5b193c8110dca3f3c515d23f35f5ae29edf012824ccfcfd915a295f89285ada6",
+  "n_full": 102,
+  "start": "2018-01-01",
+  "end": "2026-06-01",
+  "missing_targets": 0,
+  "duplicate_dates": 0,
+  "adjacent_repeats": {
+    "2018-02-01": 9.78,
+    "2018-03-01": 9.78,
+    "2018-05-01": 8.591,
+    "2018-07-01": 8.087,
+    "2018-08-01": 8.087,
+    "2018-09-01": 8.087,
+    "2020-12-01": 10.454,
+    "2022-12-01": 10.569
+  },
+  "source_check": {
+    "samruk_january_2018_twh": 10.3573,
+    "ember_january_2018_twh": 9.78,
+    "samruk_Q1_2018_twh": 29.3392,
+    "ember_Q1_2018_twh": 29.339999999999996,
+    "interpretation": "Quarterly averaging is plausible, not established for all months."
+  }
+}

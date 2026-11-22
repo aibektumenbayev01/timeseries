@@ -1,0 +1,326 @@
+[
+  {
+    "last_training_month": "2023-12-01",
+    "model": "SARIMA(1, 0, 0)(1, 1, 0)[12] + constant",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2023-12-01",
+    "model": "SARIMA(1, 0, 0)(1, 1, 0)[12] + constant",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2024-03-01",
+    "model": "SARIMA(1, 0, 0)(1, 1, 0)[12] + constant",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2024-06-01",
+    "model": "SARIMA(1, 0, 0)(1, 1, 0)[12] + constant",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2024-09-01",
+    "model": "SARIMA(1, 0, 0)(1, 1, 0)[12] + constant",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2023-12-01",
+    "model": "SARIMA(1, 0, 0)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": [
+      "Non-invertible starting seasonal moving average Using zeros as starting parameters."
+    ]
+  },
+  {
+    "last_training_month": "2023-12-01",
+    "model": "SARIMA(1, 0, 0)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": [
+      "Non-invertible starting seasonal moving average Using zeros as starting parameters."
+    ]
+  },
+  {
+    "last_training_month": "2024-03-01",
+    "model": "SARIMA(1, 0, 0)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2024-06-01",
+    "model": "SARIMA(1, 0, 0)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2024-09-01",
+    "model": "SARIMA(1, 0, 0)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2023-12-01",
+    "model": "SARIMA(0, 0, 1)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": [
+      "Non-invertible starting seasonal moving average Using zeros as starting parameters."
+    ]
+  },
+  {
+    "last_training_month": "2023-12-01",
+    "model": "SARIMA(0, 0, 1)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": [
+      "Non-invertible starting seasonal moving average Using zeros as starting parameters."
+    ]
+  },
+  {
+    "last_training_month": "2024-03-01",
+    "model": "SARIMA(0, 0, 1)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2024-06-01",
+    "model": "SARIMA(0, 0, 1)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2024-09-01",
+    "model": "SARIMA(0, 0, 1)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2023-12-01",
+    "model": "SARIMA(1, 0, 1)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": [
+      "Non-invertible starting seasonal moving average Using zeros as starting parameters."
+    ]
+  },
+  {
+    "last_training_month": "2023-12-01",
+    "model": "SARIMA(1, 0, 1)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": [
+      "Non-invertible starting seasonal moving average Using zeros as starting parameters."
+    ]
+  },
+  {
+    "last_training_month": "2024-03-01",
+    "model": "SARIMA(1, 0, 1)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2024-06-01",
+    "model": "SARIMA(1, 0, 1)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2024-09-01",
+    "model": "SARIMA(1, 0, 1)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2023-12-01",
+    "model": "SARIMA(0, 1, 1)(0, 1, 1)[12]",
+    "converged": true,
+    "warnings": [
+      "Non-invertible starting seasonal moving average Using zeros as starting parameters."
+    ]
+  },
+  {
+    "last_training_month": "2023-12-01",
+    "model": "SARIMA(0, 1, 1)(0, 1, 1)[12]",
+    "converged": true,
+    "warnings": [
+      "Non-invertible starting seasonal moving average Using zeros as starting parameters."
+    ]
+  },
+  {
+    "last_training_month": "2024-03-01",
+    "model": "SARIMA(0, 1, 1)(0, 1, 1)[12]",
+    "converged": true,
+    "warnings": [
+      "Non-invertible starting seasonal moving average Using zeros as starting parameters."
+    ]
+  },
+  {
+    "last_training_month": "2024-06-01",
+    "model": "SARIMA(0, 1, 1)(0, 1, 1)[12]",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2024-09-01",
+    "model": "SARIMA(0, 1, 1)(0, 1, 1)[12]",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2023-12-01",
+    "model": "SARIMA(1, 1, 0)(0, 1, 1)[12]",
+    "converged": true,
+    "warnings": [
+      "Non-invertible starting seasonal moving average Using zeros as starting parameters."
+    ]
+  },
+  {
+    "last_training_month": "2023-12-01",
+    "model": "SARIMA(1, 1, 0)(0, 1, 1)[12]",
+    "converged": true,
+    "warnings": [
+      "Non-invertible starting seasonal moving average Using zeros as starting parameters."
+    ]
+  },
+  {
+    "last_training_month": "2024-03-01",
+    "model": "SARIMA(1, 1, 0)(0, 1, 1)[12]",
+    "converged": true,
+    "warnings": [
+      "Non-invertible starting seasonal moving average Using zeros as starting parameters."
+    ]
+  },
+  {
+    "last_training_month": "2024-06-01",
+    "model": "SARIMA(1, 1, 0)(0, 1, 1)[12]",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2024-09-01",
+    "model": "SARIMA(1, 1, 0)(0, 1, 1)[12]",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2023-12-01",
+    "model": "SARIMA(0, 1, 1)(1, 1, 0)[12]",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2023-12-01",
+    "model": "SARIMA(0, 1, 1)(1, 1, 0)[12]",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2024-03-01",
+    "model": "SARIMA(0, 1, 1)(1, 1, 0)[12]",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2024-06-01",
+    "model": "SARIMA(0, 1, 1)(1, 1, 0)[12]",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2024-09-01",
+    "model": "SARIMA(0, 1, 1)(1, 1, 0)[12]",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2023-12-01",
+    "model": "SARIMA(1, 1, 0)(1, 1, 0)[12]",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2023-12-01",
+    "model": "SARIMA(1, 1, 0)(1, 1, 0)[12]",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2024-03-01",
+    "model": "SARIMA(1, 1, 0)(1, 1, 0)[12]",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2024-06-01",
+    "model": "SARIMA(1, 1, 0)(1, 1, 0)[12]",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2024-09-01",
+    "model": "SARIMA(1, 1, 0)(1, 1, 0)[12]",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2024-12-01",
+    "model": "SARIMA(1, 0, 0)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2025-03-01",
+    "model": "SARIMA(1, 0, 0)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2025-06-01",
+    "model": "SARIMA(1, 0, 0)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2025-09-01",
+    "model": "SARIMA(1, 0, 0)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2024-12-01",
+    "model": "SARIMA(1, 0, 0)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2024-12-01",
+    "model": "SARIMA(1, 0, 0)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2025-03-01",
+    "model": "SARIMA(1, 0, 0)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2025-06-01",
+    "model": "SARIMA(1, 0, 0)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2025-09-01",
+    "model": "SARIMA(1, 0, 0)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": []
+  },
+  {
+    "last_training_month": "2025-12-01",
+    "model": "SARIMA(1, 0, 0)(0, 1, 1)[12] + constant",
+    "converged": true,
+    "warnings": []
+  }
+]

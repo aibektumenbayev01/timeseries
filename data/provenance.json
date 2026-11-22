@@ -1,0 +1,39 @@
+{
+  "sources": [
+    {
+      "path": "data/raw/ember_monthly_global.csv",
+      "url": "https://files.ember-energy.org/public-downloads/generation/outputs/release_generation_monthly_global.csv",
+      "downloaded_or_extracted": "2026-11-18",
+      "bytes": 29477581,
+      "sha256": "98c12ba74eae3378ca6c5ca61219337f508cb877ec3bf4df1b20c11a935e4d64"
+    },
+    {
+      "path": "data/source_checks/samruk_2018_january.docx",
+      "url": "https://samruk-energy.kz/images/analitcs/2018_1.docx",
+      "downloaded_or_extracted": "2026-11-22",
+      "bytes": 135348,
+      "sha256": "d8f111ab5f7781d47b6d732f44340cd93f18d2273827f20e7f721c5030bddeda"
+    },
+    {
+      "path": "data/source_checks/samruk_2018_q1.docx",
+      "url": "https://samruk-energy.kz/images/analitcs/2018_3.docx",
+      "downloaded_or_extracted": "2026-11-22",
+      "bytes": 203118,
+      "sha256": "fd3d942299c9f20ddfe422af68b2e8bd501a1d834d431b760dd491694b6ce021"
+    },
+    {
+      "path": "data/kazakhstan_generation_snapshot.csv",
+      "url": null,
+      "downloaded_or_extracted": "2026-11-18",
+      "bytes": 1870,
+      "sha256": "5b193c8110dca3f3c515d23f35f5ae29edf012824ccfcfd915a295f89285ada6"
+    }
+  ],
+  "extraction_filter": {
+    "Area": "Kazakhstan",
+    "Electricity source": "Total generation",
+    "Date": "Date",
+    "Generation_TWh": "Generation (TWh)"
+  },
+  "note": "The original report PDF was generated with ReportLab. LaTeX is a newly supplied equivalent source version."
+}

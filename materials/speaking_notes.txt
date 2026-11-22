@@ -1,0 +1,81 @@
+Speaking guide and roles
+
+No slide deck has been created.
+
+Person 1: motivation and data
+
+Our project forecasts Kazakhstan's total monthly electricity generation. We study the national total, rather than one company or region, and measure generation in terawatt-hours. One terawatt-hour is one billion kilowatt-hours. Our question is whether a seasonal ARIMA model can predict the next three months more accurately than using the same months from last year.
+
+We use public data from Ember, whose methodology identifies Samruk as a source for Kazakhstan's monthly generation. The downloaded snapshot contains 102 consecutive months from January 2018 to June 2026. It has no missing months, blank national values or duplicate dates. However, complete data can still contain quality problems.
+
+We found that Ember assigns exactly 9.780 terawatt-hours to each of the first three months of 2018. The original Samruk January report gives 10.3573. The first-quarter total is close to the sum of Ember's repeated values, which suggests averaging may have occurred. We do not claim to have established how every observation was constructed.
+
+For that reason, our main analysis excludes 2018. It uses the 84 monthly observations from 2019 through 2025, with complete calendar years for validation and testing. We keep the source values unchanged and later check whether including 2018 changes our conclusion. The next section explains the seasonal pattern and our evaluation design.
+
+Person 2: patterns, baseline and evaluation
+
+The training-data seasonal plot shows higher generation in winter and lower values in summer. This suggests a pattern repeating every twelve months. It motivates a seasonal model, although the plot alone cannot prove that temperature causes the pattern. We use monthly totals, so month length can also affect the values.
+
+Our baseline is seasonal naive. To forecast January, for example, it simply uses the previous January's generation. This rule is easy to understand and gives the statistical model a meaningful benchmark. A complex model is useful only if it improves on something simple.
+
+We preserve the order of time. The first sixty observations, covering 2019 to 2023, form the initial training set. We use the twelve observations in 2024 to choose among eight small SARIMA specifications. We reserve 2025 for the final comparison and do not use its errors to choose the model.
+
+In each evaluation year, we forecast January to March, then April to June, July to September and October to December. At each boundary, we refit using only the observations already available. We never use actual values from inside a forecast block to predict another month in that same block. Both methods therefore predict the same three months from the same information.
+
+We measure accuracy using mean absolute error and root mean squared error, both in terawatt-hours. MAE gives the average absolute miss, while RMSE gives more weight to large misses. We also report errors separately for the first, second and third forecast months.
+
+Person 3: SARIMA and residual checks
+
+SARIMA extends ARIMA by including relationships that repeat over a seasonal period. Here that period is twelve months. Our selected model is SARIMA one-zero-zero, zero-one-one, with a period of twelve and a constant. It has one ordinary autoregressive term, one seasonal difference and one seasonal moving-average term.
+
+To interpret the equation, we first subtract the value from twelve months earlier. This gives the year-on-year change, which we call z. The model relates this change to the previous month's change, a constant, the current unpredictable innovation and an innovation from twelve months earlier. The constant lets the model accommodate an average annual change.
+
+We select this specification because it has the lowest validation MAE among the eight candidates. We estimate parameters by maximum likelihood and keep the order fixed during testing. The code uses a class called SARIMAX, but we supply no external variables, so it implements a SARIMA model.
+
+We then examine residuals from a fit using observations only through December 2024. Residuals are actual values minus fitted values. If large systematic patterns remain, the model has missed useful information. We omit the first thirteen residuals to reduce initialization effects.
+
+The Ljung-Box p-values are about 0.62 at lag twelve and 0.65 at lag twenty-four. We therefore do not detect significant residual autocorrelation at those examined lags. This does not prove that the model is correct or that its uncertainty intervals are reliable. The final section shows the held-out forecast results and their limitations.
+
+Person 4: findings and conclusion
+
+On the 2025 test year, the seasonal naive baseline has mean absolute error of 0.435 terawatt-hours. SARIMA reduces this to 0.343. That is about a 21 percent reduction in average absolute forecast error. RMSE also falls, from 0.483 to 0.418 terawatt-hours. We calculate these scores using the same twelve actual observations and the same forecast blocks.
+
+Both approaches underpredict on average. Every month in 2025 has higher generation than its matching month in 2024. This disadvantages the baseline, which simply repeats last year. SARIMA adapts to some of the increase, although its third-month forecasts still have larger errors than its earlier horizons.
+
+We also test sensitivity to the disputed early data. Adding 2018 back, without choosing a different model, gives SARIMA MAE of about 0.360 terawatt-hours. It remains below the baseline, so the direction of the conclusion is unchanged.
+
+The uncertainty intervals deserve caution. The nominal ninety-five percent SARIMA intervals contain only ten of the twelve test observations. The nominal eighty percent intervals contain nine. These results show that better point forecasts do not automatically mean well-calibrated uncertainty. With twelve test values, our assessment is also imprecise.
+
+Our conclusion is that SARIMA improves point forecasts in this historical experiment. We cannot promise the same improvement in another year. The source discrepancy, later revisions, limited test sample and omitted factors such as weather and outages remain important limitations. The dated early-2026 forecast in the report is an illustration, not a current forecast made in November.
+
+Questions and answers
+
+Why choose electricity?
+It gives a local application, regular monthly data and several annual cycles. It supports a simple seasonal comparison without collecting external predictors.
+
+What is the difference between generation and demand?
+Generation is electricity produced. Demand is a different quantity and can involve net imports and other accounting definitions. We forecast the published generation series only.
+
+Why do 102 observations become 84?
+We exclude twelve months in 2018 following the source discrepancy, and the six available months of the partial 2026 year. This leaves 2019-2025.
+
+Why not use all data for training?
+Then there would be no unseen observations for evaluating forecast accuracy. Validation selects settings; the test year assesses the frozen modelling rule.
+
+What does seasonal differencing do?
+It subtracts each value from its matching month one year earlier. It can remove a repeating annual seasonal level.
+
+Why is d zero but D one?
+Lowercase d is ordinary differencing. Uppercase D is seasonal differencing. The selected model uses one seasonal difference and no additional ordinary difference.
+
+Is the constant c the average annual change?
+Not directly. In the selected AR(1) equation for the seasonal difference, its stationary mean is c divided by one minus phi.
+
+Does a high Ljung-Box p-value prove a good model?
+No. It means these tests did not detect residual autocorrelation at the selected lags. It does not establish normality, independence or accurate prediction intervals.
+
+Does 21% improvement mean 79% accuracy?
+No. It is a relative reduction in MAE: 100 times baseline MAE minus model MAE, divided by baseline MAE. It is not an accuracy percentage.
+
+What if the professor asks for a real future forecast?
+The snapshot ends in June 2026. Update and audit the source, then refit with information available at the new origin. Do not label the dated January-March illustration as a current forecast.

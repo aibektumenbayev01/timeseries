@@ -1,0 +1,21 @@
+# Local environments and caches
+.venv/
+venv/
+.cache/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.DS_Store
+
+# LaTeX intermediates (compiled PDFs are intentionally tracked)
+report/*.aux
+report/*.log
+report/*.out
+report/*.toc
+report/*.fls
+report/*.fdb_latexmk
+report/*.synctex.gz
+
+# Private build/review files
+work/
+*.zip

@@ -1,0 +1,31 @@
+{
+  "2018-01": {
+    "original_table_row": [
+      "Казахстан",
+      "Всего",
+      "9187,5",
+      "10357,3",
+      "12,73%"
+    ],
+    "unit": "million kWh",
+    "value_2018": 10357.3,
+    "TWh": 10.3573
+  },
+  "2018-Q1": {
+    "original_table_row": [
+      "Казахстан",
+      "Всего",
+      "27085,5",
+      "29339,2",
+      "8,32%"
+    ],
+    "unit": "million kWh",
+    "value_2018": 29339.2,
+    "TWh": 29.3392
+  },
+  "ember": {
+    "2018-01": 9.78,
+    "2018-Q1_sum": 29.339999999999996
+  },
+  "interpretation": "The quarterly total nearly matches, while the individual January value differs. Averaging is plausible but not proven as the construction rule for all values."
+}
