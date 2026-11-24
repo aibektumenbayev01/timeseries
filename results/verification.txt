@@ -1,0 +1,2 @@
+Verified hashes; original-score reproduction; 36 common forecasts; independent growth formula; cutoff invariance; tie handling; pooled/horizon metrics; coverage; notebook; report/deck values.
+SARIMA did not outperform growth-adjusted naive on 2025: MAE 0.343359 versus 0.161083 TWh.

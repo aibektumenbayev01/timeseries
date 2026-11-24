@@ -35,5 +35,5 @@
     "Date": "Date",
     "Generation_TWh": "Generation (TWh)"
   },
-  "note": "The original report PDF was generated with ReportLab. LaTeX is a newly supplied equivalent source version."
+  "note": "Current report and presentation PDFs compile from editable LaTeX. Frozen source bytes and source hashes are unchanged."
 }

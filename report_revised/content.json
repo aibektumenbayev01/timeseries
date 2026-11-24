@@ -1,0 +1,228 @@
+{
+  "version": "2026-11-24 growth benchmark revision",
+  "authoritative_template": "scripts/templates/report.tex",
+  "generated_tex": "report_ams_style/main.tex",
+  "summary": {
+    "selected_order": [
+      1,
+      0,
+      0
+    ],
+    "selected_seasonal_order": [
+      0,
+      1,
+      1,
+      12
+    ],
+    "trend": "c",
+    "selected_label": "SARIMA(1, 0, 0)(0, 1, 1)[12] + constant",
+    "main_n": 84,
+    "train_n": 60,
+    "validation_n": 12,
+    "test_n": 12,
+    "baseline_validation": {
+      "MAE": 0.5083333333333333,
+      "RMSE": 0.5666905387128555,
+      "Bias_actual_minus_forecast": 0.4241666666666665
+    },
+    "validation": [
+      {
+        "candidate": 1,
+        "Model": "SARIMA(1, 0, 0)(0, 1, 1)[12] + constant",
+        "initial_AICc": 50.701419155996476,
+        "MAE": 0.35368268890566884,
+        "RMSE": 0.41267830932139593,
+        "Bias_actual_minus_forecast": 0.15570592829307076
+      },
+      {
+        "candidate": 2,
+        "Model": "SARIMA(0, 0, 1)(0, 1, 1)[12] + constant",
+        "initial_AICc": 53.737736593531345,
+        "MAE": 0.3575620312128489,
+        "RMSE": 0.416772468741808,
+        "Bias_actual_minus_forecast": 0.15971536644013748
+      },
+      {
+        "candidate": 3,
+        "Model": "SARIMA(1, 0, 1)(0, 1, 1)[12] + constant",
+        "initial_AICc": 50.07871025380433,
+        "MAE": 0.37771450328315376,
+        "RMSE": 0.43447675707145766,
+        "Bias_actual_minus_forecast": 0.1426222261467672
+      },
+      {
+        "candidate": 0,
+        "Model": "SARIMA(1, 0, 0)(1, 1, 0)[12] + constant",
+        "initial_AICc": 52.78138002336917,
+        "MAE": 0.3998413379372603,
+        "RMSE": 0.47221758443869527,
+        "Bias_actual_minus_forecast": 0.21198364186735233
+      },
+      {
+        "candidate": 5,
+        "Model": "SARIMA(1, 1, 0)(0, 1, 1)[12]",
+        "initial_AICc": 53.41805750214662,
+        "MAE": 0.4109374793571104,
+        "RMSE": 0.47124379918351417,
+        "Bias_actual_minus_forecast": 0.08846707545462351
+      },
+      {
+        "candidate": 4,
+        "Model": "SARIMA(0, 1, 1)(0, 1, 1)[12]",
+        "initial_AICc": 48.127413674731315,
+        "MAE": 0.42898920091846104,
+        "RMSE": 0.4980730298507379,
+        "Bias_actual_minus_forecast": 0.14743672863844015
+      },
+      {
+        "candidate": 7,
+        "Model": "SARIMA(1, 1, 0)(1, 1, 0)[12]",
+        "initial_AICc": 56.8193377517553,
+        "MAE": 0.45632493001806,
+        "RMSE": 0.5343671887857515,
+        "Bias_actual_minus_forecast": 0.1332217363204844
+      },
+      {
+        "candidate": 6,
+        "Model": "SARIMA(0, 1, 1)(1, 1, 0)[12]",
+        "initial_AICc": 50.60854133349163,
+        "MAE": 0.4649259152379061,
+        "RMSE": 0.5431502874052695,
+        "Bias_actual_minus_forecast": 0.1819215120439822
+      }
+    ],
+    "test": [
+      {
+        "Model": "Seasonal naive",
+        "MAE": 0.43516666666666665,
+        "RMSE": 0.48297757021763804,
+        "Bias_actual_minus_forecast": 0.43516666666666665,
+        "Coverage80": 0.8333333333333334,
+        "Coverage95": 1.0
+      },
+      {
+        "Model": "Growth-adjusted seasonal naive",
+        "MAE": 0.16108333333333316,
+        "RMSE": 0.2167989980501654,
+        "Bias_actual_minus_forecast": 0.03641666666666691,
+        "Coverage80": null,
+        "Coverage95": null
+      },
+      {
+        "Model": "SARIMA",
+        "MAE": 0.34335940997607334,
+        "RMSE": 0.417508577873126,
+        "Bias_actual_minus_forecast": 0.26975230819586127,
+        "Coverage80": 0.75,
+        "Coverage95": 0.8333333333333334
+      }
+    ],
+    "mae_improvement_percent": 21.097033326065105,
+    "growth_comparison": {
+      "status": "Follow-up prompted by original results; fixed additive 12-month rule, not tuned on 2025",
+      "sarima_minus_growth_MAE": 0.18227607664274018,
+      "sarima_MAE_reduction_vs_growth_percent": -113.15638487909386,
+      "growth_adjustments": [
+        {
+          "origin": "2024-12-01",
+          "growth_adjustment_TWh": 0.4241666666666665
+        },
+        {
+          "origin": "2025-03-01",
+          "growth_adjustment_TWh": 0.40783333333333305
+        },
+        {
+          "origin": "2025-06-01",
+          "growth_adjustment_TWh": 0.37016666666666626
+        },
+        {
+          "origin": "2025-09-01",
+          "growth_adjustment_TWh": 0.3928333333333331
+        }
+      ]
+    },
+    "selection_tie_rule": "Minimum unrounded validation MAE. Exact ties: AICc only if all tied models share (d,D); otherwise candidate enumeration. No tie occurred.",
+    "sensitivity_include_2018": {
+      "MAE": 0.3596161232261486,
+      "RMSE": 0.44076727703388763,
+      "Bias_actual_minus_forecast": 0.27440731673002244
+    },
+    "ljung_box": [
+      {
+        "index": 12,
+        "lb_stat": 8.075216685455928,
+        "lb_pvalue": 0.6214899440080551
+      },
+      {
+        "index": 24,
+        "lb_stat": 18.887933646377842,
+        "lb_pvalue": 0.6522380716921167
+      }
+    ],
+    "stationarity": [
+      {
+        "Series": "Levels",
+        "n": 60,
+        "ADF_stat": -2.2580967531155345,
+        "ADF_p": 0.18583880009987508,
+        "KPSS_stat": 0.18304725529392848,
+        "KPSS_p_table_bound": 0.1
+      },
+      {
+        "Series": "Seasonal difference",
+        "n": 48,
+        "ADF_stat": -4.143738352099573,
+        "ADF_p": 0.0008192763828534415,
+        "KPSS_stat": 0.35795033258708425,
+        "KPSS_p_table_bound": 0.09528002905729127
+      },
+      {
+        "Series": "Seasonal and first difference",
+        "n": 47,
+        "ADF_stat": -8.051165799186753,
+        "ADF_p": 1.740505294399164e-12,
+        "KPSS_stat": 0.26579319416379127,
+        "KPSS_p_table_bound": 0.1
+      }
+    ],
+    "coefficients": [
+      {
+        "term": "intercept",
+        "estimate": 0.12142492900015525,
+        "std_error": 0.031264928527227516,
+        "p_value": 0.00010286087886140752
+      },
+      {
+        "term": "ar.L1",
+        "estimate": 0.3138089318273948,
+        "std_error": 0.14093033054902152,
+        "p_value": 0.025967631874585267
+      },
+      {
+        "term": "ma.S.L12",
+        "estimate": -0.8639600212027648,
+        "std_error": 0.3787768378424907,
+        "p_value": 0.022553125573886338
+      },
+      {
+        "term": "sigma2",
+        "estimate": 0.11621509519453002,
+        "std_error": 0.032803422610147674,
+        "p_value": 0.0003959426660837869
+      }
+    ],
+    "residual_mean": 0.016137429211439108,
+    "residual_sd": 0.38222477820967776,
+    "burn_removed": 13,
+    "initial_training_seasonal_acf12": 0.680898475834573,
+    "all_fits_converged": true,
+    "versions": {
+      "python": "3.12.14",
+      "numpy": "2.5.5",
+      "pandas": "3.1.1",
+      "scipy": "1.18.1",
+      "statsmodels": "0.15.0",
+      "matplotlib": "3.11.2"
+    }
+  }
+}

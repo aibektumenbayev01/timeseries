@@ -1,0 +1,6 @@
+Original results reproduce with no discrepancy.
+2025 MAE: naive 0.435167, growth-adjusted 0.161083, SARIMA 0.343359 TWh.
+Did SARIMA beat growth-adjusted naive? No.
+Growth-adjusted MAE is 53.1% lower than SARIMA's.
+Single test year, four origins; added benchmark is a follow-up prompted by original results.
+No growth rule tuning on 2025. Only the latest 12 observed year-on-year changes are averaged at each cutoff.

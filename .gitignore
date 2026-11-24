@@ -19,3 +19,15 @@ report/*.synctex.gz
 # Private build/review files
 work/
 *.zip
+
+# Current LaTeX report variants and presentation intermediates
+**/*.aux
+**/*.log
+**/*.out
+**/*.toc
+**/*.nav
+**/*.snm
+**/*.vrb
+**/*.fls
+**/*.fdb_latexmk
+**/*.synctex.gz

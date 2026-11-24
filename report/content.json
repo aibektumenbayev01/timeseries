@@ -1,530 +1,228 @@
-[
-  {
-    "type": "paragraph",
-    "style": "ReportTitle",
-    "text": "FORECASTING KAZAKHSTAN'S TOTAL MONTHLY<br/>ELECTRICITY GENERATION USING SARIMA"
-  },
-  {
-    "type": "paragraph",
-    "style": "ReportMeta",
-    "text": "Mathematics project group<br/>Nazarbayev University<br/>Time Series Final Project - 22 November 2026"
-  },
-  {
-    "type": "paragraph",
-    "style": "BodyAcademic",
-    "text": "<b>Abstract.</b> This study compares a seasonal naive baseline with SARIMA for forecasting Kazakhstan's national monthly electricity generation. A frozen Ember dataset contains 102 months, while the main experiment uses 84 observations from 2019 to 2025 after a source audit. Eight low-order specifications are compared using 2024 validation forecasts. SARIMA(1,0,0)(0,1,1)<sub>12</sub> with a constant achieves a 2025 test MAE of 0.343 TWh, compared with 0.435 TWh for the baseline, a 21.1% reduction. Residual tests reveal no significant autocorrelation at the examined lags. However, prediction intervals under-cover this small test sample, and source construction limits interpretation."
-  },
-  {
-    "type": "paragraph",
-    "style": "SectionAcademic",
-    "text": "1. Introduction"
-  },
-  {
-    "type": "paragraph",
-    "style": "BodyAcademic",
-    "text": "National electricity generation provides a clear application for seasonal time-series forecasting. Short-term forecasts can inform discussion of expected production, although they do not by themselves determine dispatch, consumption or infrastructure requirements. This project asks: <i>Does SARIMA improve three-month forecasts of Kazakhstan's monthly electricity generation relative to using the same months from the previous year?</i>"
-  },
-  {
-    "type": "paragraph",
-    "style": "BodyAcademic",
-    "text": "The scope is deliberately univariate. The study compares a transparent seasonal benchmark with a small classical model, using the same forecast origins and horizons. The study evaluates whether short-term dependence and a seasonal difference add useful predictive information beyond repeating last year. A source check and a sensitivity analysis support interpretation of the resulting comparison."
-  },
-  {
-    "type": "paragraph",
-    "style": "SectionAcademic",
-    "text": "2. Data description and quality"
-  },
-  {
-    "type": "paragraph",
-    "style": "BodyAcademic",
-    "text": "Ember's public monthly electricity file [1] is filtered to <i>Area = Kazakhstan</i> and <i>Electricity source = Total generation</i>. The target is <i>Generation (TWh)</i>, measured in terawatt-hours. One TWh equals one billion kWh. Dates identify months. The dataset covers the national total, not only Samruk-Energy's own plants."
-  },
-  {
-    "type": "table",
-    "rows": [
-      [
-        "Snapshot audit",
-        "Verified result"
-      ],
-      [
-        "Coverage",
-        "January 2018-June 2026; 102 months"
-      ],
-      [
-        "Missingness",
-        "No missing months, blank targets or duplicate dates"
-      ],
-      [
-        "Main experiment",
-        "January 2019-December 2025; 84 months"
-      ],
-      [
-        "Snapshot downloaded",
-        "18 November 2026; preserved as a local CSV"
-      ]
+{
+  "version": "2026-11-24 growth benchmark revision",
+  "authoritative_template": "scripts/templates/report.tex",
+  "generated_tex": "report_ams_style/main.tex",
+  "summary": {
+    "selected_order": [
+      1,
+      0,
+      0
     ],
-    "widths": [
-      154.20472440944883,
-      327.68503937007875
-    ]
-  },
-  {
-    "type": "paragraph",
-    "style": "CaptionAcademic",
-    "text": "Table 1. Audit of the unchanged national series. The current study uses a frozen data version."
-  },
-  {
-    "type": "pagebreak"
-  },
-  {
-    "type": "paragraph",
-    "style": "SectionAcademic",
-    "text": "2.1. Source discrepancy and sample choice"
-  },
-  {
-    "type": "paragraph",
-    "style": "BodyAcademic",
-    "text": "The absence of blank cells does not establish measurement quality. Ember lists 9.780 TWh for each of January-March 2018. Samruk's original January report [3] gives 10,357.3 million kWh, or 10.3573 TWh. Its first-quarter report gives 29.3392 TWh, close to Ember's three-month sum of 29.340 TWh. This is consistent with quarterly averaging, but does not prove how the whole file was constructed. The main experiment excludes 2018, keeps the original values unchanged, and checks sensitivity to adding that year back. The partial 2026 year is outside the main experiment so that validation and testing use complete calendar years."
-  },
-  {
-    "type": "paragraph",
-    "style": "SectionAcademic",
-    "text": "2.2. Time-series patterns"
-  },
-  {
-    "type": "figure",
-    "filename": "01_history.png",
-    "height_cm": 5.25
-  },
-  {
-    "type": "paragraph",
-    "style": "CaptionAcademic",
-    "text": "Figure 1. Main study series. Shaded regions mark the validation and test years. The historical display includes all study years, while model exploration uses only 2019-2023."
-  },
-  {
-    "type": "figure",
-    "filename": "02_seasonality.png",
-    "height_cm": 5.1
-  },
-  {
-    "type": "paragraph",
-    "style": "CaptionAcademic",
-    "text": "Figure 2. Monthly patterns in the initial training sample. Higher winter values and lower summer values suggest an annual seasonal component. The plot does not establish a causal weather effect."
-  },
-  {
-    "type": "paragraph",
-    "style": "BodyAcademic",
-    "text": "The training-set lag-12 autocorrelation is 0.681. The ADF test on levels has p = 0.186, while the level-stationarity KPSS test has p &gt;= 0.10. These results alone are inconclusive. After seasonal differencing, the ADF p-value is 0.0008 and the KPSS p-value is 0.095. Together with the plots, this supports considering a seasonal difference. ADF uses a constant, AIC lag selection and maximum lag 8. KPSS uses a constant and automatic bandwidth. Table-limit p-values are bounds."
-  },
-  {
-    "type": "pagebreak"
-  },
-  {
-    "type": "paragraph",
-    "style": "SectionAcademic",
-    "text": "3. Methodology"
-  },
-  {
-    "type": "paragraph",
-    "style": "BodyAcademic",
-    "text": "Let y<sub>t</sub> denote monthly national generation. The seasonal naive forecast repeats last year's matching month. For horizons h = 1, 2, 3 at forecast origin T:"
-  },
-  {
-    "type": "paragraph",
-    "style": "EquationAcademic",
-    "text": "y-hat<sub>T+h|T</sub> = y<sub>T+h-12</sub>. &nbsp;&nbsp; (1)"
-  },
-  {
-    "type": "paragraph",
-    "style": "BodyAcademic",
-    "text": "SARIMA(p,d,q)(P,D,Q)<sub>12</sub> combines ordinary and seasonal autoregressive, differencing and moving-average components [4]. Parameters use state-space maximum likelihood in statsmodels [5], with stationary AR and invertible MA constraints. For the selected model, define z<sub>t</sub> = y<sub>t</sub> - y<sub>t-12</sub>. Then:"
-  },
-  {
-    "type": "paragraph",
-    "style": "EquationAcademic",
-    "text": "z<sub>t</sub> = c + phi z<sub>t-1</sub> + e<sub>t</sub> + theta e<sub>t-12</sub>. &nbsp;&nbsp; (2)"
-  },
-  {
-    "type": "paragraph",
-    "style": "BodyAcademic",
-    "text": "The innovations e<sub>t</sub> have mean zero and constant variance under the model. The constant permits an average year-on-year change. No logarithm, external regressor or machine-learning model is used. Eight candidates are fixed before test scoring. The smallest 2024 validation MAE selects the order, with initial-training AICc as a tie-breaker. AICc is not the forecast accuracy measure. Every numerical fit converged."
-  },
-  {
-    "type": "table",
-    "rows": [
-      [
-        "Stage",
-        "Dates",
-        "Observations"
-      ],
-      [
-        "Initial training",
-        "January 2019-December 2023",
-        "60"
-      ],
-      [
-        "Validation / order selection",
-        "January-December 2024",
-        "12"
-      ],
-      [
-        "Held-out test",
-        "January-December 2025",
-        "12"
-      ]
+    "selected_seasonal_order": [
+      0,
+      1,
+      1,
+      12
     ],
-    "widths": [
-      163.84251968503938,
-      226.48818897637796,
-      91.55905511811024
-    ]
-  },
-  {
-    "type": "paragraph",
-    "style": "CaptionAcademic",
-    "text": "Table 2. Chronological design. Each validation and test year contains four non-overlapping three-month blocks."
-  },
-  {
-    "type": "paragraph",
-    "style": "BodyAcademic",
-    "text": "Before January, April, July and October, each approach uses observations only through the preceding month. Parameters are refitted on the expanding history, but the selected SARIMA order stays fixed during testing. No actual values from within a three-month block enter that block's forecasts. Earlier observed blocks may enter subsequent fits. Thus horizons 1, 2 and 3 are identical across models. MAE = mean(|y - y-hat|), and RMSE = sqrt(mean((y - y-hat)<super>2</super>)); both are in TWh."
-  },
-  {
-    "type": "table",
-    "rows": [
-      [
-        "SARIMA specification",
-        "Constant",
-        "Validation MAE",
-        "Initial AICc"
-      ],
-      [
-        "(1,0,0)(0,1,1)",
-        "Yes",
-        "0.354",
-        "50.70"
-      ],
-      [
-        "(0,0,1)(0,1,1)",
-        "Yes",
-        "0.358",
-        "53.74"
-      ],
-      [
-        "(1,0,1)(0,1,1)",
-        "Yes",
-        "0.378",
-        "50.08"
-      ],
-      [
-        "(1,0,0)(1,1,0)",
-        "Yes",
-        "0.400",
-        "52.78"
-      ],
-      [
-        "(1,1,0)(0,1,1)",
-        "No",
-        "0.411",
-        "53.42"
-      ],
-      [
-        "(0,1,1)(0,1,1)",
-        "No",
-        "0.429",
-        "48.13"
-      ],
-      [
-        "(1,1,0)(1,1,0)",
-        "No",
-        "0.456",
-        "56.82"
-      ],
-      [
-        "(0,1,1)(1,1,0)",
-        "No",
-        "0.465",
-        "50.61"
-      ]
+    "trend": "c",
+    "selected_label": "SARIMA(1, 0, 0)(0, 1, 1)[12] + constant",
+    "main_n": 84,
+    "train_n": 60,
+    "validation_n": 12,
+    "test_n": 12,
+    "baseline_validation": {
+      "MAE": 0.5083333333333333,
+      "RMSE": 0.5666905387128555,
+      "Bias_actual_minus_forecast": 0.4241666666666665
+    },
+    "validation": [
+      {
+        "candidate": 1,
+        "Model": "SARIMA(1, 0, 0)(0, 1, 1)[12] + constant",
+        "initial_AICc": 50.701419155996476,
+        "MAE": 0.35368268890566884,
+        "RMSE": 0.41267830932139593,
+        "Bias_actual_minus_forecast": 0.15570592829307076
+      },
+      {
+        "candidate": 2,
+        "Model": "SARIMA(0, 0, 1)(0, 1, 1)[12] + constant",
+        "initial_AICc": 53.737736593531345,
+        "MAE": 0.3575620312128489,
+        "RMSE": 0.416772468741808,
+        "Bias_actual_minus_forecast": 0.15971536644013748
+      },
+      {
+        "candidate": 3,
+        "Model": "SARIMA(1, 0, 1)(0, 1, 1)[12] + constant",
+        "initial_AICc": 50.07871025380433,
+        "MAE": 0.37771450328315376,
+        "RMSE": 0.43447675707145766,
+        "Bias_actual_minus_forecast": 0.1426222261467672
+      },
+      {
+        "candidate": 0,
+        "Model": "SARIMA(1, 0, 0)(1, 1, 0)[12] + constant",
+        "initial_AICc": 52.78138002336917,
+        "MAE": 0.3998413379372603,
+        "RMSE": 0.47221758443869527,
+        "Bias_actual_minus_forecast": 0.21198364186735233
+      },
+      {
+        "candidate": 5,
+        "Model": "SARIMA(1, 1, 0)(0, 1, 1)[12]",
+        "initial_AICc": 53.41805750214662,
+        "MAE": 0.4109374793571104,
+        "RMSE": 0.47124379918351417,
+        "Bias_actual_minus_forecast": 0.08846707545462351
+      },
+      {
+        "candidate": 4,
+        "Model": "SARIMA(0, 1, 1)(0, 1, 1)[12]",
+        "initial_AICc": 48.127413674731315,
+        "MAE": 0.42898920091846104,
+        "RMSE": 0.4980730298507379,
+        "Bias_actual_minus_forecast": 0.14743672863844015
+      },
+      {
+        "candidate": 7,
+        "Model": "SARIMA(1, 1, 0)(1, 1, 0)[12]",
+        "initial_AICc": 56.8193377517553,
+        "MAE": 0.45632493001806,
+        "RMSE": 0.5343671887857515,
+        "Bias_actual_minus_forecast": 0.1332217363204844
+      },
+      {
+        "candidate": 6,
+        "Model": "SARIMA(0, 1, 1)(1, 1, 0)[12]",
+        "initial_AICc": 50.60854133349163,
+        "MAE": 0.4649259152379061,
+        "RMSE": 0.5431502874052695,
+        "Bias_actual_minus_forecast": 0.1819215120439822
+      }
     ],
-    "widths": [
-      197.5748031496063,
-      72.28346456692914,
-      106.01574803149607,
-      106.01574803149607
-    ]
-  },
-  {
-    "type": "paragraph",
-    "style": "CaptionAcademic",
-    "text": "Table 3. Candidate comparison, seasonal period 12 throughout. Seasonal naive validation MAE is 0.508 TWh. AICc values across different differencing orders are descriptive only, not used for cross-order selection."
-  },
-  {
-    "type": "pagebreak"
-  },
-  {
-    "type": "paragraph",
-    "style": "SectionAcademic",
-    "text": "4. Out-of-sample results"
-  },
-  {
-    "type": "paragraph",
-    "style": "BodyAcademic",
-    "text": "The selected SARIMA(1,0,0)(0,1,1)<sub>12</sub> with a constant yields validation MAE 0.354 TWh. Its specification is then frozen for testing. Across 12 held-out observations in 2025, MAE falls from 0.435 to 0.343 TWh, a reduction of 21.1%. RMSE falls from 0.483 to 0.418 TWh. These are descriptive improvements for one test year, not a formal finding of universal or statistically significant superiority."
-  },
-  {
-    "type": "table",
-    "rows": [
-      [
-        "Model",
-        "MAE (TWh)",
-        "RMSE (TWh)",
-        "Mean error (TWh)"
-      ],
-      [
-        "Seasonal naive",
-        "0.435",
-        "0.483",
-        "0.435"
-      ],
-      [
-        "Selected SARIMA",
-        "0.343",
-        "0.418",
-        "0.270"
-      ]
+    "test": [
+      {
+        "Model": "Seasonal naive",
+        "MAE": 0.43516666666666665,
+        "RMSE": 0.48297757021763804,
+        "Bias_actual_minus_forecast": 0.43516666666666665,
+        "Coverage80": 0.8333333333333334,
+        "Coverage95": 1.0
+      },
+      {
+        "Model": "Growth-adjusted seasonal naive",
+        "MAE": 0.16108333333333316,
+        "RMSE": 0.2167989980501654,
+        "Bias_actual_minus_forecast": 0.03641666666666691,
+        "Coverage80": null,
+        "Coverage95": null
+      },
+      {
+        "Model": "SARIMA",
+        "MAE": 0.34335940997607334,
+        "RMSE": 0.417508577873126,
+        "Bias_actual_minus_forecast": 0.26975230819586127,
+        "Coverage80": 0.75,
+        "Coverage95": 0.8333333333333334
+      }
     ],
-    "widths": [
-      154.20472440944883,
-      106.01574803149607,
-      106.01574803149607,
-      115.65354330708662
-    ]
-  },
-  {
-    "type": "paragraph",
-    "style": "CaptionAcademic",
-    "text": "Table 4. Test scores for the same four three-month forecast blocks. Mean error is actual minus forecast, so positive values indicate underprediction."
-  },
-  {
-    "type": "figure",
-    "filename": "04_test_forecasts.png",
-    "height_cm": 7.0
-  },
-  {
-    "type": "paragraph",
-    "style": "CaptionAcademic",
-    "text": "Figure 3. Actual and predicted generation in 2025. Shading shows nominal Gaussian SARIMA prediction intervals. Vertical lines separate blocks with newly fitted parameters. Lines connect forecasts from different origins for readability."
-  },
-  {
-    "type": "table",
-    "rows": [
-      [
-        "Horizon",
-        "Observations",
-        "Baseline MAE",
-        "SARIMA MAE"
-      ],
-      [
-        "1 month(s)",
-        "4",
-        "0.358",
-        "0.318"
-      ],
-      [
-        "2 month(s)",
-        "4",
-        "0.370",
-        "0.191"
-      ],
-      [
-        "3 month(s)",
-        "4",
-        "0.577",
-        "0.520"
+    "mae_improvement_percent": 21.097033326065105,
+    "growth_comparison": {
+      "status": "Follow-up prompted by original results; fixed additive 12-month rule, not tuned on 2025",
+      "sarima_minus_growth_MAE": 0.18227607664274018,
+      "sarima_MAE_reduction_vs_growth_percent": -113.15638487909386,
+      "growth_adjustments": [
+        {
+          "origin": "2024-12-01",
+          "growth_adjustment_TWh": 0.4241666666666665
+        },
+        {
+          "origin": "2025-03-01",
+          "growth_adjustment_TWh": 0.40783333333333305
+        },
+        {
+          "origin": "2025-06-01",
+          "growth_adjustment_TWh": 0.37016666666666626
+        },
+        {
+          "origin": "2025-09-01",
+          "growth_adjustment_TWh": 0.3928333333333331
+        }
       ]
+    },
+    "selection_tie_rule": "Minimum unrounded validation MAE. Exact ties: AICc only if all tied models share (d,D); otherwise candidate enumeration. No tie occurred.",
+    "sensitivity_include_2018": {
+      "MAE": 0.3596161232261486,
+      "RMSE": 0.44076727703388763,
+      "Bias_actual_minus_forecast": 0.27440731673002244
+    },
+    "ljung_box": [
+      {
+        "index": 12,
+        "lb_stat": 8.075216685455928,
+        "lb_pvalue": 0.6214899440080551
+      },
+      {
+        "index": 24,
+        "lb_stat": 18.887933646377842,
+        "lb_pvalue": 0.6522380716921167
+      }
     ],
-    "widths": null
-  },
-  {
-    "type": "paragraph",
-    "style": "CaptionAcademic",
-    "text": "Table 5. Error by horizon, in TWh. With only four observations per horizon, differences are sensitive to individual months."
-  },
-  {
-    "type": "paragraph",
-    "style": "BodyAcademic",
-    "text": "Both models underpredict on average. Every 2025 monthly total exceeds its 2024 counterpart, which puts the seasonal naive rule at a disadvantage. SARIMA partially adapts to increasing levels, but does not eliminate the bias. The third-month errors remain relatively large. This pattern supports cautious use of a short horizon."
-  },
-  {
-    "type": "pagebreak"
-  },
-  {
-    "type": "paragraph",
-    "style": "SectionAcademic",
-    "text": "5. Model estimates and diagnostics"
-  },
-  {
-    "type": "paragraph",
-    "style": "BodyAcademic",
-    "text": "For a diagnostic view uncontaminated by test observations, the selected specification is fitted through December 2024. Table 6 reports maximum-likelihood estimates and their asymptotic standard errors. These estimates are not the coefficients from every quarterly refit. The seasonal MA estimate is relatively uncertain, which is consistent with the limited number of annual cycles."
-  },
-  {
-    "type": "table",
-    "rows": [
-      [
-        "Parameter",
-        "Estimate",
-        "Standard error"
-      ],
-      [
-        "Constant c",
-        "0.1214",
-        "0.0313"
-      ],
-      [
-        "AR coefficient phi",
-        "0.3138",
-        "0.1409"
-      ],
-      [
-        "Seasonal MA theta",
-        "-0.8640",
-        "0.3788"
-      ],
-      [
-        "Innovation variance (TWh squared)",
-        "0.1162",
-        "0.0328"
-      ]
+    "stationarity": [
+      {
+        "Series": "Levels",
+        "n": 60,
+        "ADF_stat": -2.2580967531155345,
+        "ADF_p": 0.18583880009987508,
+        "KPSS_stat": 0.18304725529392848,
+        "KPSS_p_table_bound": 0.1
+      },
+      {
+        "Series": "Seasonal difference",
+        "n": 48,
+        "ADF_stat": -4.143738352099573,
+        "ADF_p": 0.0008192763828534415,
+        "KPSS_stat": 0.35795033258708425,
+        "KPSS_p_table_bound": 0.09528002905729127
+      },
+      {
+        "Series": "Seasonal and first difference",
+        "n": 47,
+        "ADF_stat": -8.051165799186753,
+        "ADF_p": 1.740505294399164e-12,
+        "KPSS_stat": 0.26579319416379127,
+        "KPSS_p_table_bound": 0.1
+      }
     ],
-    "widths": [
-      250.58267716535434,
-      115.65354330708662,
-      115.65354330708662
-    ]
-  },
-  {
-    "type": "paragraph",
-    "style": "CaptionAcademic",
-    "text": "Table 6. Pre-test fit using January 2019-December 2024. In equation (2), c is the intercept of z, not its unconditional mean."
-  },
-  {
-    "type": "figure",
-    "filename": "05_residuals.png",
-    "height_cm": 7.7
-  },
-  {
-    "type": "paragraph",
-    "style": "CaptionAcademic",
-    "text": "Figure 4. Residual sequence and autocorrelation from the pre-test fit. The first 13 residuals are omitted to reduce initialization effects. Remaining residual mean = 0.016 TWh. ACF bounds are approximate individual-lag reference bounds."
-  },
-  {
-    "type": "paragraph",
-    "style": "BodyAcademic",
-    "text": "Ljung-Box statistics are 8.075 at lag 12 (p = 0.621) and 18.888 at lag 24 (p = 0.652), adjusting degrees of freedom for two AR/MA coefficients. The tests do not reject the absence of residual autocorrelation at these lags. This does not prove independence, normality, constant variance or correct specification. The residual plot and seasonal-source limitations remain relevant."
-  },
-  {
-    "type": "paragraph",
-    "style": "BodyAcademic",
-    "text": "The SARIMA 80% intervals contain 9 of 12 test observations (75.0%), and its 95% intervals contain 10 of 12 (83.3%). These are nominal Gaussian intervals conditional on the fitted model and estimated parameters. They do not fully reflect parameter uncertainty or data revisions. Coverage below the nominal levels is an important limitation, even though point-forecast errors improve. Twelve observations cannot precisely assess long-run coverage."
-  },
-  {
-    "type": "pagebreak"
-  },
-  {
-    "type": "paragraph",
-    "style": "SectionAcademic",
-    "text": "6. Sensitivity, limitations and conclusion"
-  },
-  {
-    "type": "paragraph",
-    "style": "BodyAcademic",
-    "text": "Adding 2018 back while retaining the selected SARIMA order gives test MAE 0.360 TWh and RMSE 0.441 TWh. The seasonal naive forecasts are unchanged because their matching months lie in 2024. The SARIMA advantage therefore remains, although its magnitude is smaller. This is a sensitivity check, not another model-selection round."
-  },
-  {
-    "type": "paragraph",
-    "style": "BodyAcademic",
-    "text": "The analysis uses a current frozen snapshot, not the data vintages available at each historical forecast origin. Later revisions or source construction may affect past values. Other repeated observations remain after 2018, and only a small part of the source chain was independently checked. Forecasts should therefore be interpreted as forecasts of the published Ember series, not as independently validated measurements of physical generation."
-  },
-  {
-    "type": "paragraph",
-    "style": "BodyAcademic",
-    "text": "A single held-out year and four forecast origins limit generalization. The univariate model does not explain weather, plant outages, fuel supply, trade or policy changes. Monthly totals also reflect unequal month lengths. Generation is not the same as demand, and successful historical forecasts do not establish a causal relationship or an operational planning rule."
-  },
-  {
-    "type": "paragraph",
-    "style": "BodyAcademic",
-    "text": "For illustration, a refit through December 2025 produces the following three-month forecasts. These use only the study endpoint and are deliberately dated. They are not live forecasts made from November 2026 and are not part of the model-selection or main test scores."
-  },
-  {
-    "type": "table",
-    "rows": [
-      [
-        "Forecast month",
-        "Forecast (TWh)",
-        "95% lower",
-        "95% upper"
-      ],
-      [
-        "2026-01",
-        "11.860",
-        "11.130",
-        "12.590"
-      ],
-      [
-        "2026-02",
-        "10.812",
-        "10.052",
-        "11.572"
-      ],
-      [
-        "2026-03",
-        "11.367",
-        "10.605",
-        "12.129"
-      ]
+    "coefficients": [
+      {
+        "term": "intercept",
+        "estimate": 0.12142492900015525,
+        "std_error": 0.031264928527227516,
+        "p_value": 0.00010286087886140752
+      },
+      {
+        "term": "ar.L1",
+        "estimate": 0.3138089318273948,
+        "std_error": 0.14093033054902152,
+        "p_value": 0.025967631874585267
+      },
+      {
+        "term": "ma.S.L12",
+        "estimate": -0.8639600212027648,
+        "std_error": 0.3787768378424907,
+        "p_value": 0.022553125573886338
+      },
+      {
+        "term": "sigma2",
+        "estimate": 0.11621509519453002,
+        "std_error": 0.032803422610147674,
+        "p_value": 0.0003959426660837869
+      }
     ],
-    "widths": null
-  },
-  {
-    "type": "paragraph",
-    "style": "CaptionAcademic",
-    "text": "Table 7. Dated forecast illustration, conditional on observations through December 2025."
-  },
-  {
-    "type": "paragraph",
-    "style": "BodyAcademic",
-    "text": "<b>Conclusion.</b> For this historical evaluation, SARIMA improves three-month point forecasts over the seasonal naive rule, reducing test MAE by 21.1%. The benefit persists when 2018 is included. Residual autocorrelation tests do not reveal a clear remaining pattern, but the interval coverage and source audit prevent a stronger reliability claim. A longer evaluation across more forecast origins and better-verified monthly source data would be the most useful next steps."
-  },
-  {
-    "type": "paragraph",
-    "style": "SectionAcademic",
-    "text": "References"
-  },
-  {
-    "type": "paragraph",
-    "style": "SmallAcademic",
-    "text": "[1] Ember. Monthly Electricity Data. Snapshot downloaded 18 November 2026. <link href=\"https://ember-energy.org/data/monthly-electricity-data/\" color=\"#194c76\">https://ember-energy.org/data/monthly-electricity-data/</link>"
-  },
-  {
-    "type": "paragraph",
-    "style": "SmallAcademic",
-    "text": "[2] Ember. Electricity Data Methodology, version 1.6. Kazakhstan source notes. <link href=\"https://files.ember-energy.org/public-downloads/ember_electricity_data_methodology.pdf\" color=\"#194c76\">https://files.ember-energy.org/public-downloads/ember_electricity_data_methodology.pdf</link>"
-  },
-  {
-    "type": "paragraph",
-    "style": "SmallAcademic",
-    "text": "[3] Samruk-Energy. Electricity market reports, January and January-March 2018. <link href=\"https://samruk-energy.kz/en/press-center/analytical-review\" color=\"#194c76\">https://samruk-energy.kz/en/press-center/analytical-review</link>"
-  },
-  {
-    "type": "paragraph",
-    "style": "SmallAcademic",
-    "text": "[4] Hyndman, R. J. and Athanasopoulos, G. (2021). Forecasting: Principles and Practice, 3rd ed. OTexts. Chapters 5 and 9. <link href=\"https://otexts.com/fpp3/\" color=\"#194c76\">https://otexts.com/fpp3/</link>"
-  },
-  {
-    "type": "paragraph",
-    "style": "SmallAcademic",
-    "text": "[5] statsmodels. SARIMAX documentation, version 0.15.0. <link href=\"https://www.statsmodels.org/stable/generated/statsmodels.tsa.statespace.sarimax.SARIMAX.html\" color=\"#194c76\">https://www.statsmodels.org/stable/generated/statsmodels.tsa.statespace.sarimax.SARIMAX.html</link>"
+    "residual_mean": 0.016137429211439108,
+    "residual_sd": 0.38222477820967776,
+    "burn_removed": 13,
+    "initial_training_seasonal_acf12": 0.680898475834573,
+    "all_fits_converged": true,
+    "versions": {
+      "python": "3.12.14",
+      "numpy": "2.5.5",
+      "pandas": "3.1.1",
+      "scipy": "1.18.1",
+      "statsmodels": "0.15.0",
+      "matplotlib": "3.11.2"
+    }
   }
-]
+}

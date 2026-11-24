@@ -1,0 +1,60 @@
+{
+  "status": "reproduced",
+  "tolerance": 1e-10,
+  "comparison": {
+    "Seasonal naive": {
+      "MAE": {
+        "archived": 0.43516666666666665,
+        "rerun": 0.43516666666666665,
+        "difference": 0.0
+      },
+      "RMSE": {
+        "archived": 0.48297757021763804,
+        "rerun": 0.48297757021763804,
+        "difference": 0.0
+      },
+      "Bias_actual_minus_forecast": {
+        "archived": 0.43516666666666665,
+        "rerun": 0.43516666666666665,
+        "difference": 0.0
+      }
+    },
+    "SARIMA": {
+      "MAE": {
+        "archived": 0.34335940997607334,
+        "rerun": 0.34335940997607334,
+        "difference": 0.0
+      },
+      "RMSE": {
+        "archived": 0.417508577873126,
+        "rerun": 0.417508577873126,
+        "difference": 0.0
+      },
+      "Bias_actual_minus_forecast": {
+        "archived": 0.26975230819586127,
+        "rerun": 0.26975230819586127,
+        "difference": 0.0
+      }
+    }
+  },
+  "versions": {
+    "python": "3.12.14",
+    "numpy": "2.5.5",
+    "pandas": "3.1.1",
+    "scipy": "1.18.1",
+    "statsmodels": "0.15.0",
+    "matplotlib": "3.11.2"
+  },
+  "selected_order": [
+    1,
+    0,
+    0
+  ],
+  "selected_seasonal_order": [
+    0,
+    1,
+    1,
+    12
+  ],
+  "note": "Original unmodified analysis rerun before adding benchmark; no discrepancy."
+}

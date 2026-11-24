@@ -1,0 +1,258 @@
+FORECASTING KAZAKHST AN’S TOT AL MONTHL Y ELECTRICITY
+GENERA TION USING SARIMA
+NARLEN UALIKAN, DARIYA KUANTAY, AIBEK TUMENBAYEV, AZHAR SARBASSOVA
+Abstract. This paper compares seasonal naive forecasts, a growth-adjusted seasonal naive
+benchmark, and SARIMA for Kazakhstan’s national monthly electricity generation. The
+frozen Ember dataset contains 102 months; the main experiment uses 84 observations
+from 2019 to 2025 after a source audit. Eight low-order specifications are evaluated on
+2024 forecasts; SARIMA(1,0,0)(0,1,1) 12 with a constant is retained for the 2025 test. An
+unchanged-code rerun reproduces the original test MAEs: 0.435 TWh for seasonal naive
+and 0.343 TWh for SARIMA. A follow-up benchmark adds the latest 12-month mean
+year-on-year change, using only observations through each cutoff. Its MAE is 0.161 TWh
+and RMSE is 0.217 TWh, outperforming SARIMA on this test. Thus, SARIMA’s 21.1%
+MAE reduction against the original baseline does not establish an advantage over a simple
+growth adjustment. There are only 12 test observations and four forecast origins. Source
+construction and observed interval undercoverage limit stronger conclusions.
+1.Introduction
+Estimating electricity generation at the national scale provides an application of seasonal
+forecasting. Short-term forecasts feed into discussions of expected production, but they do
+not fully determine dispatch, consumption, or infrastructure investments. The objective
+is to investigate whether SARIMA improves forecasts of monthly electricity generation
+in Kazakhstan at horizons of one, two, and three months compared with repeating the
+corresponding months of the previous year.
+A univariate approach is taken on purpose. The comparison between a transparent seasonal
+benchmark and a small classical model uses identical forecast origins and horizons. Do short-
+term dependence and seasonal differencing add information beyond simply repeating last year?
+A source check and sensitivity analysis help interpret the comparison. The original results
+showed underprediction during a year of growth. This prompted a follow-up comparison with
+a fixed growth-adjusted seasonal naive rule; it was not part of the original model selection
+and is not tuned on 2025.
+2.Data description and quality
+Ember’s public monthly electricity data [1] were filtered byArea = Kazakhstanand
+Electricity source = Total generation. The variable of interest isGeneration (TWh), measured
+in terawatt-hours. One TWh equals one billion kWh. Dates correspond to months. These
+data reflect the national total, not just Samruk-Energy’s plants.
+Table 1.Audit of the unchanged national series. The current study uses a
+frozen data version.
+Snapshot audit Verified result
+Coverage January 2018-June 2026; 102 months
+Missingness No missing months, blank targets or duplicate dates
+Main experiment January 2019-December 2025; 84 months
+Snapshot downloaded 18 November 2026; preserved as a local CSV
+Key words and phrases.Time series, electricity generation, Kazakhstan, SARIMA, seasonal forecasting.
+1
+
+2 UALIKAN, KUANTAY, TUMENBAYEV AND SARBASSOV A
+2.1.Source discrepancy and sample choice.An absence of empty cells does not guarantee
+accurate measurement. Ember reports 9.780 TWh for each of January, February, and March
+2018. Samruk’s original report for January [3] shows 10,357.3 million kWh, or 10.3573 TWh.
+Its first-quarter report gives 29.3392 TWh, very close to Ember’s three-month total of 29.340
+TWh. This is consistent with quarterly averaging, but it does not prove how the entire file
+was constructed. The main experiment excludes 2018; Ember’s original data stay untouched.
+Sensitivity to including 2018 is investigated. The partial year of 2026 falls outside the main
+experiment so validation and testing can proceed with complete calendar years.
+Figure 1.Main study series. Shaded regions mark validation and test years.
+The historical display includes all study years; model exploration uses only
+2019-2023.
+Figure 2.Monthly patterns in the initial training sample. Higher winter
+values and lower summer values suggest an annual seasonal component. The
+plot does not establish a causal weather effect.
+2.2.Time-series patterns.The training-set lag-12 autocorrelation comes out to 0.681. The
+ADF test on levels has p = 0.186; the level-stationarity KPSS test hasp≥ 0.10. At the 5%
+level, neither test rejects its respective null hypothesis, so these results are inconclusive about
+the level series. After seasonal differencing, the ADF p-value drops to 0.0008 and the KPSS
+p-value is 0.095. Combined with the plots, this supports considering seasonal differencing.
+The ADF test uses a constant, AIC lag selection, and maximum lag 8. The KPSS test uses a
+constant and automatic bandwidth. Table-limit p-values are bounds.
+3.Methodology
+Consider monthly national generation yt. The seasonal naive forecast uses the value from
+the same month of the previous year. For forecast origin T and horizons h = 1, 2, 3:
+
+MONTHLY ELECTRICITY GENERATION IN KAZAKHSTAN 3
+byT+h|T =y T+h−12 (1)
+SARIMA(p,d,q)(P,D,Q)12 combines ordinary (p,d,q) ARIMA components with seasonal
+(P,D,Q)12 components [4]. State-space maximum likelihood estimation is used in statsmodels
+[5], with restrictions ensuring stationary AR and invertible MA components. For the chosen
+model, define zt = yt - yt-12. Then:
+zt =c+ϕz t−1 +ε t +θε t−12 (2)
+The innovationsεt have zero mean and constant variance under the model. The constant
+allows an average year-on-year change; it is an intercept, not directly the unconditional mean
+of zt. No logarithm, external regressors, or machine-learning model is used. Eight candidates
+are fixed before test scoring. The smallest unrounded 2024 validation MAE selects the order.
+For an exact MAE tie, initial-training AICc breaks the tie only when all tied models share
+the same differencing orders(d, D); otherwise the original candidate enumeration is retained.
+There were no tied validation MAEs, so this clarification does not alter the selected model.
+AICc is not the forecast accuracy criterion. All numerical fits converged.
+Table 2.Chronological design. Each validation and test year contains four
+non-overlapping three-month blocks.
+Stage Dates Observations
+Initial training January 2019-December 2023 60
+Validation / order selection January-December 2024 12
+Held-out test January-December 2025 12
+For January, April, July, and October, models use data only up to the previous month.
+Parameters are refitted with extended history, but the chosen SARIMA order stays fixed
+during testing. Forecasts for a three-month period make no use of actual values within that
+period. Earlier observed periods can, however, be incorporated into later fits. All three models
+are therefore evaluated on the same target months at horizons 1, 2, and 3. For the same n
+forecast errors, MAE and RMSE are defined below; both are measured in TWh.
+MAE = 1n nXi=1 |yi −byi|,RMSE = vuut 1n nXi=1(yi −byi)2.
+Table 3.Candidate comparison, seasonal period 12 throughout. Seasonal
+naive validation MAE is 0.508 TWh. Minimum unrounded validation MAE
+selects the model. Exact ties use initial AICc only within a common(d, D); ties
+spanning differencing orders retain candidate enumeration. No tie occurred.
+AICc values across differing orders are descriptive only.
+SARIMA specification Constant Validation MAE Initial AICc
+(1,0,0)(0,1,1) Yes 0.354 50.70
+(0,0,1)(0,1,1) Yes 0.358 53.74
+(1,0,1)(0,1,1) Yes 0.378 50.08
+(1,0,0)(1,1,0) Yes 0.400 52.78
+(1,1,0)(0,1,1) No 0.411 53.42
+(0,1,1)(0,1,1) No 0.429 48.13
+(1,1,0)(1,1,0) No 0.456 56.82
+(0,1,1)(1,1,0) No 0.465 50.61
+
+4 UALIKAN, KUANTAY, TUMENBAYEV AND SARBASSOV A
+3.1.Growth-adjusted seasonal naive: follow-up comparison.The rule adds an absolute
+change in TWh, not a percentage growth rate. At cutoffT, let
+gT = 112 11Xj=0(yT−j −y T−j−12 ),by growthT+h|T =y T+h−12 +g T , h= 1,2,3.(3)
+This uses the latest 12 observed year-on-year changes, requiring 24 months of history. The
+same gT is added to all three forecasts from a cutoff. It is recomputed at December 2024,
+March, June and September 2025, with no within-block updating. The 12-month averaging
+window and additive form are fixed for this follow-up, not selected by trying alternatives on
+2025. No intervals are assigned to this point-forecast benchmark. Growth adjustments at the
+four cutoffs are 0.4242, 0.4078, 0.3702, 0.3928 TWh, respectively.
+3.2.April 2025 example.Fit through March 2025 and issue April, May and June together.
+For the growth benchmark, average April 2024–March 2025 year-on-year changes, each
+compared with its matching month in April 2023–March 2024. This givesgT = 0.407833
+TWh. For example, April’s adjusted forecast is9.615 + 0.407833 ≈ 10.023TWh. April–June
+actual generation is revealed only for scoring; April’s actual value does not update the May
+or June forecasts. Later July forecasts may use the completed April–June observations.
+Table 4.April–June 2025 block, issued through March 2025. All entries are
+TWh; actuals are shown only for later comparison.
+Month Actual Naive Growth-adjusted SARIMA
+April 9.729 9.615 10.023 9.978
+May 9.834 9.524 9.932 9.455
+June 9.243 8.752 9.160 8.981
+4.Out-of-sample results
+Before extending the comparison, the unmodified analysis was rerun on the frozen national
+CSV. It reproduced the original seasonal naive MAE of 0.435 TWh and SARIMA MAE of 0.343
+TWh (no numerical discrepancy at tolerance10−10). The selected specification and its 2024
+validation MAE of 0.354 TWh are unchanged. The same four blocks and expanding-history
+refits are used for all three models.
+Table 5.Pooled 2025 test scores, all in TWh, for identical forecast blocks.
+Mean error is actual minus forecast; positive values indicate underprediction.
+The growth-adjusted rule is a follow-up comparison.
+Model MAE RMSE Mean error
+Seasonal naive 0.435 0.483 0.435
+Growth-adjusted naive 0.161 0.217 0.036
+SARIMA 0.343 0.418 0.270
+Table 6.MAE by horizon in TWh. There are only four forecasts per horizon.
+Growth-adjusted denotes the added follow-up benchmark.
+Horizon Count Naive Growth-adjusted SARIMA
+1 4 0.358 0.106 0.318
+2 4 0.370 0.199 0.191
+3 4 0.577 0.179 0.520
+
+MONTHLY ELECTRICITY GENERATION IN KAZAKHSTAN 5
+Figure 3.Actual and predicted generation in 2025. The x-axis has one tick
+per month; vertical separators mark new three-month forecast blocks starting
+in April, July and October. Forecasts are issued through December 2024,
+March, June and September 2025. Shading shows nominal Gaussian SARIMA
+prediction intervals. Lines join forecasts from different origins for readability.
+The growth-adjusted benchmark has the lowest pooled MAE (0.161 TWh) and RMSE
+(0.217 TWh). Its MAE is 53.1% lower than SARIMA’s, a difference of 0.182 TWh. SARIMA
+still improves on the original seasonal naive benchmark by 21.1%, but that advantage does
+not persist against the simple growth adjustment. All three pooled mean errors are positive,
+indicating underprediction on average; the growth adjustment reduces this bias substantially.
+Every observed month in 2025 exceeds its corresponding 2024 total, which disadvantages the
+original seasonal naive rule.
+The horizon table contains only four forecasts per horizon. The growth benchmark has
+lower MAE at horizons one and three; SARIMA has slightly lower MAE at horizon two. The
+pooled ranking therefore does not imply that one method wins at every horizon or every
+origin. This is a follow-up comparison motivated by the original test results, not a new
+untouched confirmatory test. The improvement cannot establish statistical significance or
+general superiority; another test period would be needed for an independent assessment.
+5.Model estimates and diagnostics
+The estimates used for the diagnostic plot do not use observations from the test year.
+Table 7 reports maximum-likelihood estimates and their asymptotic standard errors. These
+are not the estimates from each quarterly refit, but from a model fitted through December
+2024. The seasonal MA estimate is relatively uncertain, which is consistent with the small
+number of annual cycles.
+Table 7.Pre-test fit using January 2019-December 2024. In equation (2), c
+is the intercept of z, not its unconditional mean.
+Parameter Estimate Standard error
+Constant c 0.1214 0.0313
+AR coefficient phi 0.3138 0.1409
+Seasonal MA theta -0.8640 0.3788
+Innovation variance (TWh squared) 0.1162 0.0328
+Ljung-Box statistics are 8.075 at lag 12 (p = 0.621) and 18.888 at lag 24 (p = 0.652),
+with degrees of freedom adjusted for two AR/MA coefficients. These tests fail to reject the
+hypothesis of no residual autocorrelation at these lags. They do not establish independence,
+
+6 UALIKAN, KUANTAY, TUMENBAYEV AND SARBASSOV A
+Figure 4.Residual sequence and autocorrelation from the pre-test fit. The
+first 13 residuals are omitted to reduce initialization effects. Remaining residual
+mean = 0.016 TWh. ACF bounds are approximate individual-lag reference
+bounds.
+normality, constant variance, or correct model specification. The residual plot and source-data
+limitations still apply.
+The SARIMA 80% intervals cover 9 of 12 test observations (75.0%); its 95% intervals
+cover 10 of 12 (83.3%). These are nominal Gaussian prediction intervals conditional on the
+fitted SARIMA model and estimated parameters. They do not fully account for parameter
+uncertainty or data revisions. Observed coverage falls below the nominal levels even though
+point-forecast errors improve. Parameter uncertainty, model misspecification, and data
+limitations may contribute, but this small test cannot establish the cause. Twelve observations
+are insufficient to estimate long-run coverage precisely.
+6.Sensitivity, limitations and conclusion
+Including the full year 2018 in the training history, while retaining the selected SARIMA
+specification, gives test MAE of 0.360 TWh and RMSE of 0.441 TWh. Seasonal naive forecasts
+do not change because their corresponding months are in 2024. The growth-adjusted forecasts
+also remain unchanged: at the first cutoff their adjustment uses 2023–2024 only, and later
+cutoffs use more recent observations. SARIMA still beats the original seasonal naive baseline,
+but remains behind the growth-adjusted benchmark (MAE 0.161 TWh). This is a sensitivity
+analysis, not a step in model selection.
+The analysis rests on a frozen data snapshot, not the data vintages available at each
+historical forecast origin. Later data revisions or source construction may affect published
+series values. Other repeated observations exist after 2018; only a small portion of the
+source chain was independently verified. These forecasts should be viewed as forecasts of the
+published Ember series, not independently validated measurements of physical generation.
+The study is limited to a single held-out year and four forecast origins. The univariate
+model does not explicitly account for weather, plant maintenance, fuel availability, trade, or
+policy changes. Published monthly totals are affected by the varying number of days in each
+month. Generation is not demand; historical forecasting ability does not establish a causal
+relationship or an operational planning rule.
+As an example, refitting the model through December 2025 yields the following three-month
+forecasts. They use only information available through the study endpoint and are explicitly
+
+MONTHLY ELECTRICITY GENERATION IN KAZAKHSTAN 7
+dated to that forecast origin. They are not live forecasts issued in November 2026 and are
+not part of model selection or primary testing.
+Table 8.Dated forecast illustration, conditional on observations through
+December 2025.
+Forecast month Forecast (TWh) 95% lower 95% upper
+2026-01 11.860 11.130 12.590
+2026-02 10.812 10.052 11.572
+2026-03 11.367 10.605 12.129
+Conclusion.SARIMA improves on the original seasonal naive model in the 2025 historical
+test, with a 21.1% reduction in pooled MAE. However, it does not outperform the growth-
+adjusted seasonal naive benchmark: their MAEs are 0.343 and 0.161 TWh, respectively. The
+more demanding comparison shows that a simple adjustment for recent annual change is
+sufficient to outperform the selected SARIMA on this particular year. This benchmark was
+added after seeing the original results and requires independent evaluation in future work.
+Residual tests do not detect remaining autocorrelation at the tested lags, but the SARIMA
+80% and 95% intervals cover only 9/12 and 10/12 test observations. A single test year, four
+origins and the source audit limit stronger reliability claims. More forecast origins and a more
+extensive audit of the monthly source series would strengthen the evidence.
+References
+[1] Ember. Monthly Electricity Data. Snapshot downloaded 18 November 2026.
+https://ember-energy.org/data/monthly-electricity-data/
+[2] Ember. Electricity Data Methodology, version 1.6. Kazakhstan source notes.
+https://files.ember-energy.org/public-downloads/ember_electricity_data_methodology.pdf
+[3] Samruk-Energy. Electricity market reports, January and January-March 2018.
+https://samruk-energy.kz/en/press-center/analytical-review
+[4] Hyndman, R. J. and Athanasopoulos, G. (2021). Forecasting: Principles and Practice, 3rd ed. OTexts.
+Chapters 5 and 9.
+https://otexts.com/fpp3/
+[5] statsmodels. SARIMAX documentation, version 0.15.0.
+https://www.statsmodels.org/stable/generated/statsmodels.tsa.statespace.sarimax.SARIMAX.html
+Department of Mathematics, Nazarbayev University, Kazakhstan

@@ -13,6 +13,7 @@ import pandas as pd
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 import statsmodels
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from statsmodels.tsa.stattools import adfuller, kpss, acf
@@ -45,7 +46,7 @@ assert full.notna().all() and (full > 0).all() and len(full) == 102
 assert full.index.min() == pd.Timestamp('2018-01-01')
 assert full.index.max() == pd.Timestamp('2026-06-01')
 repeats = full[full.eq(full.shift())]
-audit = {'snapshot_downloaded':'2026-11-18', 'analysis_date':'2026-11-22',
+audit = {'snapshot_downloaded':'2026-11-18', 'analysis_date':'2026-11-24',
          'source_url':'https://files.ember-energy.org/public-downloads/generation/outputs/release_generation_monthly_global.csv',
          'filter':{'Area':'Kazakhstan','Electricity source':'Total generation','target':'Generation (TWh)'},
          'snapshot_sha256':hashlib.sha256(raw_path.read_bytes()).hexdigest(),
@@ -127,18 +128,39 @@ def errors(actual,pred):
     e=np.asarray(actual)-np.asarray(pred)
     return {'MAE':float(np.mean(np.abs(e))),'RMSE':float(np.sqrt(np.mean(e**2))),
             'Bias_actual_minus_forecast':float(np.mean(e))}
-def backtest(series,start,end,spec=None):
+def growth_adjustment(hist):
+    # Latest 12 observed year-on-year differences: requires 24 observed months.
+    changes=hist.diff(12).iloc[-12:]
+    assert len(changes)==12 and changes.notna().all()
+    return float(changes.mean())
+
+def select_candidate(scores):
+    # Exact unrounded validation-MAE ties only. AICc is comparable only within
+    # a common differencing pair (d,D); retain candidate order across pairs.
+    tied=scores.loc[scores.MAE.eq(scores.MAE.min())].copy()
+    groups={(CANDIDATES[int(i)][0][1],CANDIDATES[int(i)][1][1]) for i in tied.candidate}
+    if len(groups)==1:
+        return int(tied.sort_values(['initial_AICc','candidate']).iloc[0].candidate)
+    return int(tied.sort_values('candidate').iloc[0].candidate)
+
+def backtest(series,start,end,spec=None,adjust_growth=False):
     dates=pd.date_range(start,end,freq='MS'); records=[]
     assert len(dates)%3==0
     for origin in dates[::3]:
         hist=series.loc[series.index<origin]
         assert hist.index.max()<origin
         future=pd.date_range(origin,periods=3,freq='MS')
+        adjustment=growth_adjustment(hist) if adjust_growth else 0.0
+        assert not (spec is not None and adjust_growth)
         if spec is None:
             pred=np.array([hist.loc[d-pd.DateOffset(years=1)] for d in future])
+            pred=pred+adjustment
             scale=float(np.sqrt(np.mean(hist.diff(12).dropna()**2)))
             lo80,hi80=pred-norm.ppf(.9)*scale,pred+norm.ppf(.9)*scale
             lo95,hi95=pred-norm.ppf(.975)*scale,pred+norm.ppf(.975)*scale
+            if adjust_growth:
+                # Point-only benchmark; no unvalidated interval construction.
+                lo80=hi80=lo95=hi95=np.full(3,np.nan)
         else:
             fit=fit_model(hist,spec)
             fc=fit.get_forecast(steps=3)
@@ -148,7 +170,8 @@ def backtest(series,start,end,spec=None):
         for i,d in enumerate(future):
             records.append({'Date':d,'origin':hist.index[-1],'horizon':i+1,
                 'actual':float(series.loc[d]),'forecast':float(pred[i]),'lower80':float(lo80[i]),
-                'upper80':float(hi80[i]),'lower95':float(lo95[i]),'upper95':float(hi95[i])})
+                'upper80':float(hi80[i]),'lower95':float(lo95[i]),'upper95':float(hi95[i]),
+                'growth_adjustment_TWh':adjustment})
     return pd.DataFrame(records)
 validation_rows=[]
 for i,spec in enumerate(CANDIDATES):
@@ -158,7 +181,7 @@ for i,spec in enumerate(CANDIDATES):
                             **errors(bt.actual,bt.forecast)})
     print('Validated',label(spec),flush=True)
 validation_scores=pd.DataFrame(validation_rows).sort_values(['MAE','initial_AICc'])
-selected=CANDIDATES[int(validation_scores.iloc[0]['candidate'])]
+selected=CANDIDATES[select_candidate(validation_scores)]
 validation_scores.to_csv(BASE/'results'/'validation_scores.csv',index=False)
 vb=backtest(y,'2024-01-01','2024-12-01')
 print('Selected on validation MAE:',label(selected))
@@ -170,13 +193,22 @@ print('Validation baseline:',errors(vb.actual,vb.forecast))
 baseline=backtest(y,'2025-01-01','2025-12-01')
 sarima=backtest(y,'2025-01-01','2025-12-01',selected)
 assert baseline.Date.equals(sarima.Date) and baseline.origin.equals(sarima.origin)
-all_predictions=pd.concat([baseline.assign(Model='Seasonal naive'),sarima.assign(Model='SARIMA')])
+# Follow-up comparison prompted by the original 2025 underprediction.
+# Fixed 12-month additive rule supplied by the group; not tuned on 2025.
+growth=backtest(y,'2025-01-01','2025-12-01',adjust_growth=True)
+assert baseline.Date.equals(growth.Date) and baseline.origin.equals(growth.origin)
+all_predictions=pd.concat([baseline.assign(Model='Seasonal naive'),
+    growth.assign(Model='Growth-adjusted seasonal naive'),sarima.assign(Model='SARIMA')])
+growth[['origin','growth_adjustment_TWh']].drop_duplicates().to_csv(BASE/'results'/'growth_adjustments.csv',index=False)
+# April block: all predictions issued with information through March 2025.
+april=all_predictions.loc[all_predictions.origin.eq(pd.Timestamp('2025-03-01'))]
+april.to_csv(BASE/'results'/'april_2025_block.csv',index=False)
 all_predictions.to_csv(BASE/'results'/'test_predictions.csv',index=False)
 test_rows=[]
 for name,g in all_predictions.groupby('Model',sort=False):
     test_rows.append({'Model':name,**errors(g.actual,g.forecast),
-        'Coverage80':float(((g.actual>=g.lower80)&(g.actual<=g.upper80)).mean()),
-        'Coverage95':float(((g.actual>=g.lower95)&(g.actual<=g.upper95)).mean())})
+        'Coverage80':float(((g.actual>=g.lower80)&(g.actual<=g.upper80)).mean()) if g.lower80.notna().all() else np.nan,
+        'Coverage95':float(((g.actual>=g.lower95)&(g.actual<=g.upper95)).mean()) if g.lower95.notna().all() else np.nan})
 test_scores=pd.DataFrame(test_rows)
 test_scores.to_csv(BASE/'results'/'test_scores.csv',index=False)
 horizon_rows=[]
@@ -192,11 +224,27 @@ ax.fill_between(sarima.Date,sarima.lower80,sarima.upper80,color=BLUE,alpha=.15,l
 ax.plot(sarima.Date,sarima.actual,color='black',marker='o',label='Actual')
 ax.plot(sarima.Date,sarima.forecast,color=BLUE,marker='s',label='SARIMA')
 ax.plot(baseline.Date,baseline.forecast,color=ORANGE,ls='--',label='Seasonal naive')
+ax.plot(growth.Date,growth.forecast,color='#23865b',ls='-.',marker='^',ms=4,label='Growth-adjusted naive')
 for d in ['2025-04-01','2025-07-01','2025-10-01']:
     ax.axvline(pd.Timestamp(d),color=GREY,alpha=.3,lw=.8)
-ax.set(ylabel='Monthly generation (TWh)',xlabel='Test year: 2025 (refit every three months)')
-ax.legend(frameon=False,fontsize=8,ncol=2)
+ax.xaxis.set_major_locator(mdates.MonthLocator(interval=1))
+ax.xaxis.set_major_formatter(mdates.DateFormatter('%b'))
+ax.set(ylabel='Monthly generation (TWh)',xlabel='Month in 2025 (monthly ticks; new forecasts every three months)')
+ax.legend(frameon=False,fontsize=8,ncol=3)
 savefig('04_test_forecasts')
+# Same evidence in a presentation-sized figure, with readable monthly labels.
+fig,ax=plt.subplots(figsize=(12,3.3))
+ax.fill_between(sarima.Date,sarima.lower95,sarima.upper95,color=BLUE,alpha=.10,label='SARIMA 95% interval')
+for g,name,color,marker,ls in [(sarima,'SARIMA',BLUE,'s','-'),(baseline,'Seasonal naive',ORANGE,None,'--'),(growth,'Growth-adjusted naive','#23865b','^','-.')]:
+    ax.plot(g.Date,g.forecast,color=color,marker=marker,ms=4,ls=ls,label=name)
+ax.plot(sarima.Date,sarima.actual,color='black',marker='o',ms=4,label='Actual')
+for d in ['2025-04-01','2025-07-01','2025-10-01']:ax.axvline(pd.Timestamp(d),color=GREY,alpha=.3,lw=.8)
+ax.xaxis.set_major_locator(mdates.MonthLocator(interval=1));ax.xaxis.set_major_formatter(mdates.DateFormatter('%b'))
+ax.set_ylabel('Generation (TWh)',fontsize=15)
+ax.set_xlabel('2025 (monthly ticks)',fontsize=15)
+ax.tick_params(labelsize=14)
+ax.legend(frameon=False,fontsize=13,ncol=3,loc='upper center')
+savefig('06_test_slide')
 
 # %%
 # 5. Diagnostics on the pre-test fit, never used to retune after test scoring.
@@ -233,11 +281,18 @@ illustration=pd.DataFrame({'Date':pd.date_range('2026-01-01',periods=3,freq='MS'
 illustration.to_csv(BASE/'results'/'dated_forecast_illustration.csv',index=False)
 base_mae=float(test_scores.loc[test_scores.Model=='Seasonal naive','MAE'].iloc[0])
 model_mae=float(test_scores.loc[test_scores.Model=='SARIMA','MAE'].iloc[0])
+growth_mae=float(test_scores.loc[test_scores.Model=='Growth-adjusted seasonal naive','MAE'].iloc[0])
 summary={'selected_order':list(selected[0]),'selected_seasonal_order':list(selected[1]),'trend':selected[2],
     'selected_label':label(selected),'main_n':len(y),'train_n':len(train),'validation_n':len(validation),
     'test_n':len(test),'baseline_validation':errors(vb.actual,vb.forecast),
-    'validation':validation_scores.to_dict('records'),'test':test_scores.to_dict('records'),
+    'validation':validation_scores.to_dict('records'),
+    'test':test_scores.astype(object).where(pd.notna(test_scores),None).to_dict('records'),
     'mae_improvement_percent':100*(base_mae-model_mae)/base_mae,
+    'growth_comparison':{'status':'Follow-up prompted by original results; fixed additive 12-month rule, not tuned on 2025',
+        'sarima_minus_growth_MAE':model_mae-growth_mae,
+        'sarima_MAE_reduction_vs_growth_percent':100*(growth_mae-model_mae)/growth_mae,
+        'growth_adjustments':growth[['origin','growth_adjustment_TWh']].drop_duplicates().assign(origin=lambda x:x.origin.astype(str)).to_dict('records')},
+    'selection_tie_rule':'Minimum unrounded validation MAE. Exact ties: AICc only if all tied models share (d,D); otherwise candidate enumeration. No tie occurred.',
     'sensitivity_include_2018':sensitivity_metrics,'ljung_box':ljung.reset_index().to_dict('records'),
     'stationarity':stationarity.to_dict('records'),
     'coefficients':coefficients.to_dict('records'),'residual_mean':float(residuals.mean()),
@@ -254,7 +309,7 @@ chart_data={'history_dates':[d.strftime('%Y-%m') for d in y.index], 'history':y.
     'seasonal_months':['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
     'seasonal':{str(k):g.tolist() for k,g in train.groupby(train.index.year)},
     'test_dates':[d.strftime('%b') for d in sarima.Date],
-    'actual':sarima.actual.tolist(),'sarima':sarima.forecast.tolist(),'baseline':baseline.forecast.tolist(),
+    'actual':sarima.actual.tolist(),'sarima':sarima.forecast.tolist(),'baseline':baseline.forecast.tolist(),'growth_adjusted':growth.forecast.tolist(),
     'lower95':sarima.lower95.tolist(),'upper95':sarima.upper95.tolist(),
     'residual_dates':[d.strftime('%Y-%m') for d in residuals.index], 'residuals':residuals.tolist(),
     'residual_acf':acf(residuals,nlags=24,fft=False).tolist()[1:]}

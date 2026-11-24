@@ -97,6 +97,14 @@
       "Coverage95": 1.0
     },
     {
+      "Model": "Growth-adjusted seasonal naive",
+      "MAE": 0.16108333333333316,
+      "RMSE": 0.2167989980501654,
+      "Bias_actual_minus_forecast": 0.03641666666666691,
+      "Coverage80": null,
+      "Coverage95": null
+    },
+    {
       "Model": "SARIMA",
       "MAE": 0.34335940997607334,
       "RMSE": 0.417508577873126,
@@ -106,6 +114,30 @@
     }
   ],
   "mae_improvement_percent": 21.097033326065105,
+  "growth_comparison": {
+    "status": "Follow-up prompted by original results; fixed additive 12-month rule, not tuned on 2025",
+    "sarima_minus_growth_MAE": 0.18227607664274018,
+    "sarima_MAE_reduction_vs_growth_percent": -113.15638487909386,
+    "growth_adjustments": [
+      {
+        "origin": "2024-12-01",
+        "growth_adjustment_TWh": 0.4241666666666665
+      },
+      {
+        "origin": "2025-03-01",
+        "growth_adjustment_TWh": 0.40783333333333305
+      },
+      {
+        "origin": "2025-06-01",
+        "growth_adjustment_TWh": 0.37016666666666626
+      },
+      {
+        "origin": "2025-09-01",
+        "growth_adjustment_TWh": 0.3928333333333331
+      }
+    ]
+  },
+  "selection_tie_rule": "Minimum unrounded validation MAE. Exact ties: AICc only if all tied models share (d,D); otherwise candidate enumeration. No tie occurred.",
   "sensitivity_include_2018": {
     "MAE": 0.3596161232261486,
     "RMSE": 0.44076727703388763,
